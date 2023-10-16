@@ -2,6 +2,8 @@ use anchor_lang::prelude::*;
 use bytemuck::Zeroable;
 use std::convert::From;
 
+// AUDIT: Very confused about this. What's the advantage over Pubkey?
+// It looks to me like x: Option<Pubkey> becomes NonZeroPubkeyOption { key: x.unwrap_or_default() } - so why?
 /// Like `Option`, but implemented for `Pubkey`.
 #[zero_copy]
 #[derive(AnchorSerialize, AnchorDeserialize, Debug, Default, PartialEq)]

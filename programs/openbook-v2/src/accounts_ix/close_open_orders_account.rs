@@ -3,6 +3,8 @@ use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct CloseOpenOrdersAccount<'info> {
+    // AUDIT: isn't it confusing that the lamports for the closed open orders go to sol_destination
+    // while the lamports for reducing open_orders_indexer size go to payer?
     #[account(mut)]
     pub payer: Signer<'info>,
     pub owner: Signer<'info>,

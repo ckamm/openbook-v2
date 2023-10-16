@@ -9,6 +9,9 @@ pub struct OpenOrdersIndexer {
     pub created_counter: u32,
     pub addresses: Vec<Pubkey>,
 }
+
+// AUDIT: This assert is pointless: Since this account isn't zero-copy, the on-chain size
+// and the struct size don't correlate.
 const_assert_eq!(size_of::<OpenOrdersIndexer>(), 32);
 
 impl OpenOrdersIndexer {

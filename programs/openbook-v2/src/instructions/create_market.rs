@@ -11,10 +11,12 @@ use crate::util::fill_from_str;
 #[allow(clippy::too_many_arguments)]
 pub fn create_market(
     ctx: Context<CreateMarket>,
+    // AUDIT: I think there's limited value to a name that the creator could set any way they like and can't edit
     name: String,
     oracle_config: OracleConfigParams,
     quote_lot_size: i64,
     base_lot_size: i64,
+    // comments about the units (seem to be in 1/1_000_000ths) could be good
     maker_fee: i64,
     taker_fee: i64,
     time_expiry: i64,
@@ -47,8 +49,10 @@ pub fn create_market(
 
     if oracle_a.is_some() && oracle_b.is_some() {
         let oracle_a = AccountInfoRef::borrow(ctx.accounts.oracle_a.as_ref().unwrap())?;
+        // AUDIT CRITICAL: copy & paste error, must be ctx.accounts.oracle_b.as_ref()
         let oracle_b = AccountInfoRef::borrow(ctx.accounts.oracle_a.as_ref().unwrap())?;
 
+        // AUDIT: why is this actually necessary?
         require!(
             oracle::determine_oracle_type(&oracle_a) == oracle::determine_oracle_type(&oracle_b),
             OpenBookError::InvalidOracleTypes
@@ -68,6 +72,8 @@ pub fn create_market(
             .bumps
             .get("market_authority")
             .ok_or(OpenBookError::SomeError)?,
+        // AUDIT: These get used as i8 a lot later. I think it's possible to set mint decimals to >= 128, so
+        // just for safety would be good to store as i8 as .try_into()? here (or use i16 math later on)
         base_decimals: ctx.accounts.base_mint.decimals,
         quote_decimals: ctx.accounts.quote_mint.decimals,
         padding1: Default::default(),

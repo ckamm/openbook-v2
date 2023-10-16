@@ -7,6 +7,8 @@ pub struct CreateOpenOrdersAccount<'info> {
     pub payer: Signer<'info>,
     pub owner: Signer<'info>,
     /// CHECK:
+    // AUDIT: Technically neither the delegate nor the market need to be an account argument, but
+    // with ALTs I guess account arguments can consume fewer bytes than instruction bytes.
     pub delegate_account: Option<UncheckedAccount<'info>>,
     #[account(
         mut,
@@ -20,6 +22,7 @@ pub struct CreateOpenOrdersAccount<'info> {
     pub open_orders_indexer: Account<'info, OpenOrdersIndexer>,
     #[account(
         init,
+        // AUDIT: the market in this list of seeds doesn't do anything (but also doesn't hurt much)
         seeds = [b"OpenOrders".as_ref(), owner.key().as_ref(), market.key().as_ref(), &(open_orders_indexer.created_counter + 1).to_le_bytes()],
         bump,
         payer = payer,

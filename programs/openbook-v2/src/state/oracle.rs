@@ -203,6 +203,7 @@ fn pyth_get_price(account: &pyth_sdk_solana::state::PriceAccount) -> (pyth_sdk_s
     }
 }
 
+// AUDIT: The comments about the unit of the price are wrong.
 /// Returns the price of one native base token, in native quote tokens
 ///
 /// Example: The for SOL at 40 USDC/SOL it would return 0.04 (the unit is USDC-native/SOL-native)
@@ -292,7 +293,7 @@ pub fn oracle_state_unchecked(acc_info: &impl KeyedAccountReader) -> Result<Orac
 
             let decimals: i8 = (pool.mint_decimals_0 as i8) - (pool.mint_decimals_1 as i8);
             let price: f64 =
-                (sqrt_price * sqrt_price).to_num::<f64>() * power_of_ten_float(decimals);
+                (sqrt_price * sqrt_price).to_num::<f64>() * power_of_ten_float(decimals); // AUDIT: bit worried about the mint decimals being used here and then being applied again outside...
 
             require_gte!(price, 0f64);
             OracleState {

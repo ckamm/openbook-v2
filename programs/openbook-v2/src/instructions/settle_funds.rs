@@ -38,6 +38,8 @@ pub fn settle_funds<'info>(ctx: Context<'_, '_, '_, 'info, SettleFunds<'info>>) 
         system_program_transfer(
             pa.penalty_heap_count * PENALTY_EVENT_HEAP,
             &ctx.accounts.system_program,
+            // AUDIT: This is dubious because it means owner can't be a PDA with data. I'm not sure if that's a problem
+            // but would separate the owner (can be any account) and the payer (user account or pda without data)
             &ctx.accounts.owner,
             &ctx.accounts.market,
         )?;

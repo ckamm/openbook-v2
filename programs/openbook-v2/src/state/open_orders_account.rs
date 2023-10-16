@@ -14,10 +14,12 @@ pub const MAX_OPEN_ORDERS: usize = 24;
 #[account(zero_copy)]
 #[derive(Debug)]
 pub struct OpenOrdersAccount {
+    // AUDIT: This is a confusing comment, since it should be at offset 8!
     // ABI: Clients rely on this being at offset 40
     pub owner: Pubkey,
     pub market: Pubkey,
 
+    // AUDIT: name is never set or used
     pub name: [u8; 32],
 
     // Alternative authority/signer of transactions for a openbook account
@@ -370,6 +372,9 @@ impl Position {
     }
 
     pub fn is_empty(&self) -> bool {
+        // AUDIT: Maybe it's always true that the current is_empty() implies penalty_heap_count == 0
+        // but it wouldn't hurt to add that condition here regardless to avoid bugs where closing can
+        // circumvent penalty fees.
         self.bids_base_lots == 0
             && self.asks_base_lots == 0
             && self.base_free_native == 0

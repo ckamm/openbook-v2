@@ -35,6 +35,9 @@ pub struct CloseMarket<'info> {
     )]
     pub event_heap: AccountLoader<'info, EventHeap>,
 
+    // AUDIT: What about closing the vault accounts? Or can you not guarantee that the valuts are empty?
+    // (is it ok to close when they're not empty?)
+
     #[account(mut)]
     /// CHECK: target for account rent needs no checks
     pub sol_destination: UncheckedAccount<'info>,

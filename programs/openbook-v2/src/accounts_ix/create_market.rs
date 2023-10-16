@@ -19,6 +19,7 @@ pub struct CreateMarket<'info> {
         bump,
     )]
     /// CHECK:
+    /// AUDIT: Isn't this more like "vault authority"?
     pub market_authority: UncheckedAccount<'info>,
 
     /// Accounts are initialized by client,
@@ -48,6 +49,7 @@ pub struct CreateMarket<'info> {
     )]
     pub market_quote_vault: Account<'info, TokenAccount>,
 
+    // AUDIT: base_mint == quote_mint allowed?
     pub base_mint: Box<Account<'info, Mint>>,
     pub quote_mint: Box<Account<'info, Mint>>,
 
