@@ -316,8 +316,12 @@ pub fn oracle_state_unchecked(acc_info: &impl KeyedAccountReader) -> Result<Orac
             let sqrt_price = U64F64::from_bits(pool.sqrt_price_x64);
 
             let decimals: i8 = (pool.mint_decimals_0 as i8) - (pool.mint_decimals_1 as i8);
+            // AUDIT: bit worried about the mint decimals being used here and then being applied again outside...
+            // On further investigation, it looks like the account stores the native/native price and this
+            // shifts it to ui units, and then outside of this function it gets shifted back to native unit.
+            // So seems good.
             let price: f64 =
-                (sqrt_price * sqrt_price).to_num::<f64>() * power_of_ten_float(decimals); // AUDIT: bit worried about the mint decimals being used here and then being applied again outside...
+                (sqrt_price * sqrt_price).to_num::<f64>() * power_of_ten_float(decimals);
 
             require_gte!(price, 0f64);
             OracleState {
