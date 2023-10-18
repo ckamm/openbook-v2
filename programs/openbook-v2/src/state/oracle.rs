@@ -112,6 +112,30 @@ impl OracleState {
     }
 
     pub fn has_valid_combined_confidence(&self, other: &Self, config: &OracleConfig) -> bool {
+        // AUDIT: This would be clearer with the deviation imo:
+        //
+        // A / B is approximately taylor-expanded to
+        //   A / muB - A / muB^2 * (B - muB)
+        //   = (A / muB^2) (2 muB - B)
+        //
+        // Since Var(A B) = E[A]^2 Var(B) + E[B]^2 Var(A) + Var(A) Var(B)
+        // we approximate the above to (ignoring the Var(A)Var(B) term)
+        //   (muA / muB^2)^2 sigmaB^2 + muB^2 / muB^4 sigmaA^2
+        //   = muA^2 / muB^2 (sigmaB^2 / muB^2 + sigmaA^2 / muA^2)
+        //
+        // So the standard deviation is approximately
+        //   muA / muB * sqrt(muA^2 / sigmaA^2 + muB^2 / sigmaB^2)
+        //
+        // If we want to compare the square of the std dev to the square of the conf filter,
+        // we should be doing
+        //   muA^2 / muB^2 (sigmaB^2 / muB^2 + sigmaA^2 / muA^2) < conf_filter^2
+        // so let's compare
+        //   muA^2 (sigmaB^2 / muB^2 + sigmaA^2 / muA^2) < conf_filter^2 * muB^2
+        // or for fewer divisions
+        //   (sigmaB muA / muB)^2 + sigmaA^2 < (conf_filter * muB)^2
+        //
+        // Skipping the extra muA/muB factor rescales the meaning of the conf_filter otherwise.
+
         // target uncertainty reads
         //   $ \sigma \approx \frac{A}{B} * \sqrt{(\sigma_A/A)^2 + (\sigma_B/B)^2} $
         // but alternatively, to avoid costly operations, we compute the square
