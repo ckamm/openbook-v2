@@ -10,6 +10,8 @@ use crate::accounts_ix::*;
 // Max events to consume per ix.
 pub const MAX_EVENTS_CONSUME: usize = 8;
 
+// AUDIT: Outdated comment. The invalid-owner code was copied from mango,
+// but is probably not needed?
 /// Load a open_orders account by key from the list of account infos.
 ///
 /// Message and return Ok() if it's missing, to lock in successful processing

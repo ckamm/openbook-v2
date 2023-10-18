@@ -86,6 +86,7 @@ pub fn place_order(ctx: Context<PlaceOrder>, order: Order, limit: u8) -> Result<
         }
 
         Side::Ask => {
+            // AUDIT: rename to free_base for consistency with the Bid branch?
             let free_assets_native = position.base_free_native;
             let max_base_native = total_base_taken_native + posted_base_native;
 

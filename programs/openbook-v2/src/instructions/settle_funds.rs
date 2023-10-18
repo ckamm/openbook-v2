@@ -11,12 +11,16 @@ pub fn settle_funds<'info>(ctx: Context<'_, '_, '_, 'info, SettleFunds<'info>>) 
 
     let mut roundoff_maker_fees = 0;
 
+    // AUDIT: This is fine now, but if maker_fee can ever change, this might be too restrictive.
+    // Imo, a sufficient condition here is bids_base_lots == 0 - we can free up the maker fees
+    // that were locked up while maker_fee > 0 even if now maker_fee <= 0.
     if market.maker_fee.is_positive() && open_orders_account.position.bids_base_lots == 0 {
         roundoff_maker_fees = open_orders_account.position.locked_maker_fees;
         open_orders_account.position.locked_maker_fees = 0;
     }
 
     let pa = &mut open_orders_account.position;
+    // AUDIT: This means maker fees are given to the referrer? Intentional?!
     let referrer_rebate = pa.referrer_rebates_available + roundoff_maker_fees;
 
     if ctx.accounts.referrer_account.is_some() {

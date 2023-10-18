@@ -93,6 +93,7 @@ pub fn place_take_order<'info>(
         system_program_transfer(
             PENALTY_EVENT_HEAP,
             &ctx.accounts.system_program,
+            // AUDIT: might be useful to separate signer and lamports payer
             &ctx.accounts.signer,
             &ctx.accounts.market,
         )?;

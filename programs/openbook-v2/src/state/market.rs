@@ -94,6 +94,7 @@ pub struct Market {
     pub fees_to_referrers: u128,
 
     /// Referrer rebates to be distributed
+    // AUDIT: Maybe rename to referrer_rebates_available to make distinction to "accrued over market lifetime" clearer
     pub referrer_rebates_accrued: u64,
 
     /// Fees generated and available to withdraw via sweep_fees

@@ -18,6 +18,7 @@ pub fn set_delegate(ctx: Context<SetDelegate>) -> Result<()> {
 
     emit!(SetDelegateLog {
         open_orders_account: ctx.accounts.open_orders_account.key(),
+        // AUDIT: could simplify to using account.delegate.into()
         delegate: ctx
             .accounts
             .delegate_account

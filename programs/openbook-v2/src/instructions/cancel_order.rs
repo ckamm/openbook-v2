@@ -23,6 +23,7 @@ pub fn cancel_order(ctx: Context<CancelOrder>, order_id: u128) -> Result<()> {
         asks: ctx.accounts.asks.load_mut()?,
     };
 
+    // AUDIT: This does not return the leaf_node_quantity, while cancel_order_by_client_order_id does
     book.cancel_order(
         &mut open_orders_account,
         order_id,
