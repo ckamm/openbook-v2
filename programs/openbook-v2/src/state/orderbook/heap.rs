@@ -150,7 +150,7 @@ struct EventHeapIterator<'a> {
 impl<'a> Iterator for EventHeapIterator<'a> {
     type Item = (&'a AnyEvent, usize);
     fn next(&mut self) -> Option<Self::Item> {
-        // AUDIT: Why carry the index instead of checking self.slot == NO_NODE?
+        // AUDIT: Why carry the index instead of checking self.slot == NO_NODE? Ah, it's a circular list. Why though?
         if self.index == self.heap.len() {
             None
         } else {
