@@ -26,6 +26,8 @@ pub fn edit_order<'info>(
         cancel_client_order_id,
     )?;
 
+    // AUDIT: Some odd behavior:
+    // - expected_cancel_size = 0, leaf_node_quantity = 5, filled_amount = -5 -> max_base_lots gets increased by 5
     let filled_amount = expected_cancel_size - leaf_node_quantity;
     if order.max_base_lots > filled_amount {
         // Do not reduce max_quote_lots_including_fees as implicitly it's limited by max_base_lots.
